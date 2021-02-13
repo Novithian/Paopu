@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdio.h>
-#include "src/Application.h"
+#include "src/Core/Application.h"
+#include "src/Core/Logger.h"
 
-#include "src/EntryPoint.h"
+#include "src/Core/EntryPoint.h"
