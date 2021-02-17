@@ -9,9 +9,6 @@ namespace Paopu {
     class PAO_API Logger {
 
         public:
-            Logger();
-            ~Logger();
-
             static void init();
 
             inline static std::shared_ptr<spdlog::logger>& GetCoreLogger() { return s_CoreLogger; }

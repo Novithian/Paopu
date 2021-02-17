@@ -7,10 +7,12 @@
     int main(int argc, char** argv){
         
         Paopu::Logger::init();
-        PAO_CORE_WARN("Logger initialized..");
+        PAO_CORE_INFO("Logger initialized..");
         PAO_INFO("Client Logger connected..");
-
-        printf("Paopu Framework Initializing...");
+        // Comment
+        /// <summary>
+        
+        PAO_CORE_INFO("Paopu Framework Initializing...");
         auto app = Paopu::CreateApplication();
         app->Run();
         delete app;

@@ -1,6 +1,9 @@
 .vscode/
+.vs/
 bin/
+bin-int/
 build/
+out/
 
 # Prerequisites
 *.d
