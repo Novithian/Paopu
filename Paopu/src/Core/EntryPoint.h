@@ -1,5 +1,10 @@
 #pragma once
 
+#include <iostream>
+#include <stdexcept>
+#include <cstdlib>
+
+
 #ifdef PAO_PLATFORM_WINDOWS
 
     extern Paopu::Application* Paopu::CreateApplication();
@@ -14,8 +19,17 @@
         
         PAO_CORE_INFO("Paopu Framework Initializing...");
         auto app = Paopu::CreateApplication();
-        app->Run();
+
+        try {
+            app->run();
+        } catch (const std::exception& e) {
+            std::cerr << e.what() << std::endl;
+            return EXIT_FAILURE;
+        }
+
         delete app;
+
+        return EXIT_SUCCESS;
     }
 
 #endif

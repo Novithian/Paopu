@@ -6,7 +6,7 @@
 
 namespace Paopu {
     
-    class PAO_API Logger {
+    class PAOPU_API Logger {
 
         public:
             static void init();

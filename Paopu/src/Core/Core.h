@@ -12,12 +12,12 @@
 #ifdef PAO_PLATFORM_WINDOWS
     #if PAO_DYNAMIC_LINK
         #ifdef PAO_BUILD_DLL
-            #define PAO_API __declspec(dllexport)
+            #define PAOPU_API __declspec(dllexport)
         #else
-            #define PAO_API __declspec(dllimport)
+            #define PAOPU_API __declspec(dllimport)
         #endif
     #else
-        #define PAO_API
+        #define PAOPU_API
     #endif
 #else
     #error Paopu currently only supports Windows!

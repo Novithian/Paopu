@@ -1,47 +1,51 @@
 #include "Application.h"
-#include <stdio.h>
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
+#include <stdexcept>
 
-#include <iostream>
 namespace Paopu {
     
-    Application::Application(){
-
+    Application::Application() {
+        m_Renderer = new Renderer();
     }
 
-    Application::~Application(){
-
+    Application::~Application() {
+        
     }
 
-    void Application::Run(){
+    
+
+    void Application::initWindow() {
         glfwInit();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        GLFWwindow* window = glfwCreateWindow(1280, 720, "Paopu Application", nullptr, nullptr);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        uint32_t extensionCount = 0;
-        vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+        m_Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Paopu Application", nullptr, nullptr);
 
-        std::cout << extensionCount << " extensions supported\n";
+    }
 
-        glm::mat4 matrix;
-        glm::vec4 vec;
-        auto test = matrix * vec;
+    void Application::run() {
+         initWindow();
+         m_Renderer->initBackend();
+         mainLoop();
+         cleanup();     
+    }
 
-        while(!glfwWindowShouldClose(window)) {
+    void Application::cleanup() {
+        m_Renderer->cleanup();
+
+        glfwDestroyWindow(m_Window);
+        glfwTerminate();
+
+        delete m_Renderer;
+    }
+
+    void Application::mainLoop() {
+        while(!glfwWindowShouldClose(m_Window)) {
             glfwPollEvents();
         }
 
-        glfwDestroyWindow(window);
-
-        glfwTerminate();
-        
     }
+
 
 }

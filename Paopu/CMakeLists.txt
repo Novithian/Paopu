@@ -8,6 +8,7 @@ project(paopu LANGUAGES CXX C)
 add_library(${PROJECT_NAME} STATIC
 	src/Core/Application.cpp
 	src/Core/Logger.cpp
+	src/Renderer/Renderer.cpp
 )
 
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Paopu/vendor/spdlog" spdlog)
