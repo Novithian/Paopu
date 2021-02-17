@@ -7,11 +7,6 @@ namespace Paopu {
     Application::Application() {
         m_Renderer = new Renderer();
     }
-
-    Application::~Application() {
-        
-    }
-
     
 
     void Application::initWindow() {
