@@ -12,7 +12,11 @@
 #include <iostream>
 
 namespace Paopu {
+
+    // Forward Declarations 
     struct PaopuWindow;
+    
+
     class PAOPU_API Renderer {
 
         public: 
@@ -104,10 +108,15 @@ namespace Paopu {
             ///
             void create_logical_device();
 
-            ///
+            /// Create a windows surface
             ///
             ///
             void create_surface(PaopuWindow* window);
+
+            /// Create a swapchain
+            ///
+            ///
+            void create_swapchain(PaopuWindow* window);
             
 
         private:
@@ -115,6 +124,7 @@ namespace Paopu {
             VkSurfaceKHR surface;
             VkDebugUtilsMessengerEXT debug_messenger;
             PaopuDevice* device;
+            PaopuSwapchain* swapchain;
 
             const std::vector<const char*> validation_layers = {
                 "VK_LAYER_KHRONOS_validation"

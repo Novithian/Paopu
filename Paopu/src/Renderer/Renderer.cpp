@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "../Core/Window.h"
+#include "VulkanBackend/Swapchain.h"
 #include <stdexcept>
 #include <cstring>
 #include <set>
@@ -38,6 +39,10 @@ namespace Paopu {
     }
 
     void Renderer::free_renderer() {
+        // See Swapchain.h
+        free_swapchain(device->logical_device, swapchain);
+        delete swapchain;
+
         // See Device.h
         free_device(device);
         delete device;
@@ -56,11 +61,13 @@ namespace Paopu {
 
     void Renderer::init_backend(PaopuWindow* window) {
         device = new PaopuDevice();
+        swapchain = new PaopuSwapchain();
         create_instance();
         setup_debug_messenger();
         create_surface(window);
         select_physical_device();
         create_logical_device();
+        create_swapchain(window);
     }
 
     bool Renderer::check_validation_layer_support() {
@@ -210,7 +217,8 @@ namespace Paopu {
 
         create_info.pEnabledFeatures = &device_features;
 
-        create_info.enabledExtensionCount = 0;
+        create_info.enabledExtensionCount = static_cast<uint32_t>(s_device_extensions.size());
+        create_info.ppEnabledExtensionNames = s_device_extensions.data();
 
         if(k_enable_validation_layers)	{
             create_info.enabledLayerCount = static_cast<uint32_t>(validation_layers.size());
@@ -232,6 +240,79 @@ namespace Paopu {
         if(glfwCreateWindowSurface(instance, window->glfw_window, nullptr, &surface) != VK_SUCCESS) {
             throw std::runtime_error("[Renderer][Vulkan]: Failed to create a window surface!");
         }
+    }
+
+    void Renderer::create_swapchain(PaopuWindow* window) {
+        // See Swapchain.h
+        PaopuSwapchainSupportDetails swapchain_support = query_swap_chain_support(device->physical_device, surface);
+
+        // See Swapchain.h
+        VkSurfaceFormatKHR surface_format = select_swap_surface_format(swapchain_support.formats);
+        // See Swapchain.h
+        VkPresentModeKHR present_mode = select_swap_present_mode(swapchain_support.present_modes);
+        // See Swapchain.h
+        VkExtent2D extent = select_swap_extent(window, swapchain_support.capabilities);
+
+        uint32_t image_count = swapchain_support.capabilities.minImageCount + 1;
+        if(swapchain_support.capabilities.maxImageCount > 0 && image_count > swapchain_support.capabilities.maxImageCount) {
+            image_count = swapchain_support.capabilities.maxImageCount;
+        }
+
+        VkSwapchainCreateInfoKHR create_info{};
+        create_info.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
+        create_info.surface = surface;
+
+        create_info.minImageCount = image_count;
+        create_info.imageFormat = surface_format.format;
+        create_info.imageColorSpace = surface_format.colorSpace;
+        create_info.imageExtent = extent;
+        // Specifies the amount of layers that each imag consists of
+        create_info.imageArrayLayers = 1;
+        // Specifies what kind of operations the images in the swapchain will be used for
+        create_info.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+
+        QueueFamilyIndices indices = find_queue_families(device->physical_device, surface);
+        uint32_t queue_family_indices[] = {indices.graphics_family.value(), indices.present_family.value()};
+
+        // We'll be drawing the images in the swapchain to our graphics_queue
+        // Then submitting them to our presentation_queue
+        // Two ways to handle this:
+        //      `VK_SHARING_MODE_EXCLUSIVE`: An image is owned by one queue family at a time, and 
+        //          ownership must be explicitly transferred before using it in another queue
+        //          family. BEST PERFORMANCE
+        //      `VK_SHARDING_MODE_CONCURRENT`: Images can be used across multiple queue families
+        //          without explicit ownership transfers. Requires you to specify in advance
+        //          between which queue families ownserhip will be shared using the 
+        //          `queueFamilyIndexCount` and `pQueueFamilyIndices`. 
+        if(indices.graphics_family != indices.present_family) {
+            create_info.imageSharingMode = VK_SHARING_MODE_CONCURRENT;
+            create_info.queueFamilyIndexCount = 2;
+            create_info.pQueueFamilyIndices = queue_family_indices;
+        } else {
+            create_info.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            create_info.queueFamilyIndexCount = 0;
+            create_info.pQueueFamilyIndices = nullptr;
+        }
+
+        create_info.preTransform = swapchain_support.capabilities.currentTransform;
+        create_info.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
+        create_info.presentMode = present_mode;
+        // If VK_TRUE, then are saying that we don't care about the color of
+        // pixels that are being obscured.
+        create_info.clipped = VK_TRUE;
+
+        create_info.oldSwapchain = VK_NULL_HANDLE;
+
+        if(vkCreateSwapchainKHR(device->logical_device, &create_info, nullptr, &swapchain->swapchain) != VK_SUCCESS) {
+            throw std::runtime_error("[Renderer][Vulkan]: Swapchain creation failed!");
+        }
+
+        vkGetSwapchainImagesKHR(device->logical_device, swapchain->swapchain, &image_count, nullptr);
+        swapchain->images.resize(image_count);
+        vkGetSwapchainImagesKHR(device->logical_device, swapchain->swapchain, &image_count, swapchain->images.data());
+
+        swapchain->image_format = surface_format.format;
+        swapchain->extent = extent;
     }
 
     void Renderer::setup_debug_messenger() {

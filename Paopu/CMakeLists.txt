@@ -9,7 +9,7 @@ add_library(${PROJECT_NAME} STATIC
 	src/Core/Logger.cpp
 	src/Core/Window.cpp
 	src/Renderer/Renderer.cpp
-	src/Renderer/VulkanBackend/Device.cpp
+	#/src/Renderer/VulkanBackend/Device.cpp
 )
 
 #add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../Paopu/vendor/spdlog" spdlog)

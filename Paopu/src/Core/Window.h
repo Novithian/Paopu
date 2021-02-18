@@ -26,6 +26,7 @@ namespace Paopu {
 
         
     };
+
 	/// Initializes GLFW and creates the window
 	///
 	///
