@@ -5,16 +5,16 @@
 
 namespace Paopu {
 
-    std::shared_ptr<spdlog::logger> Logger::s_CoreLogger;
-    std::shared_ptr<spdlog::logger> Logger::s_ClientLogger;
+    std::shared_ptr<spdlog::logger> Logger::s_core_logger;
+    std::shared_ptr<spdlog::logger> Logger::s_client_logger;
 
     void Logger::init(){
         spdlog::set_pattern("%^[%T] %n: %v%$");
 
-        s_CoreLogger = spdlog::stdout_color_mt("Paopu");
-        s_CoreLogger->set_level(spdlog::level::trace);
+        s_core_logger = spdlog::stdout_color_mt("Paopu");
+        s_core_logger->set_level(spdlog::level::trace);
 
-        s_ClientLogger = spdlog::stdout_color_mt("App");
-        s_CoreLogger->set_level(spdlog::level::trace);
+        s_client_logger = spdlog::stdout_color_mt("App");
+        s_client_logger->set_level(spdlog::level::trace);
     }
 }

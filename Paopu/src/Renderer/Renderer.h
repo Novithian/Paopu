@@ -4,11 +4,15 @@
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
+//#include <Vulkan/vulkan.h>
+
+#include "VulkanBackend/Device.h"
+
 #include <vector>
 #include <iostream>
 
 namespace Paopu {
-
+    struct PaopuWindow;
     class PAOPU_API Renderer {
 
         public: 
@@ -18,9 +22,9 @@ namespace Paopu {
             /// Handles the initializing of our respective backend
             ///
             ///
-            void initBackend();
+            void init_backend(PaopuWindow* window);
 
-            void cleanup();
+            void free_renderer();
  
     // --------------------------------------------------------------------
     //                            - Vulkan -
@@ -54,54 +58,72 @@ namespace Paopu {
             ///
             /// `pUserData`: contains a pointer that was specified during the setup of the
             ///     callback and allows you to pass your own data to it.
-            static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-                VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                VkDebugUtilsMessageTypeFlagsEXT messageType,
-                const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
-                void* pUserData ){
-                std::cerr << "[Renderer][Validation Layer]: " << pCallbackData->pMessage << 'n';
+            static VKAPI_ATTR VkBool32 VKAPI_CALL debug_callback(
+                VkDebugUtilsMessageSeverityFlagBitsEXT message_severity,
+                VkDebugUtilsMessageTypeFlagsEXT message_type,
+                const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
+                void* user_data ){
+                std::cerr << "[Renderer][Validation Layer]: " << callback_data->pMessage << 'n';
                 return VK_FALSE;
             }
 
             /// Sets up the Debug Messenger
             ///
             ///
-            void setupDebugMessenger();
+            void setup_debug_messenger();
 
             /// Populates the debug messenger create info struct
             ///
             ///
-            void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+            void populate_debug_messenger_create_info(VkDebugUtilsMessengerCreateInfoEXT& create_info);
 
             /// Creates a Vulkan instance
             ///
             ///
-            void createInstance();
+            void create_instance();
 
             /// Checks to see if all of the requested Vulkan Validation
             /// Layers, via `m_ValidationLayers` are available 
             ///
             /// Returns true or false whether or not the requested Validation Layers
             /// are available.
-            bool checkValidationLayerSupport();
+            bool check_validation_layer_support();
 
             /// TODO: write description
             ///
             /// Returns a vector of const char*
-            std::vector<const char*> getRequiredExtensions();
+            std::vector<const char*> get_required_extensions();
+
+            /// Selects a graphics card in the running system that supports
+            /// the features we need. Multiple graphics cards can be selected
+            /// simultaneously. 
+            void select_physical_device();
+
+            /// Creates the logical device interface to communitcate
+            /// to our physical device(gpus)
+            ///
+            void create_logical_device();
+
+            ///
+            ///
+            ///
+            void create_surface(PaopuWindow* window);
+            
 
         private:
-            VkInstance m_Instance;
-            VkDebugUtilsMessengerEXT m_DebugMessenger;
+            VkInstance instance;
+            VkSurfaceKHR surface;
+            VkDebugUtilsMessengerEXT debug_messenger;
+            PaopuDevice* device;
 
-            const std::vector<const char*> m_ValidationLayers = {
+            const std::vector<const char*> validation_layers = {
                 "VK_LAYER_KHRONOS_validation"
             };
 
             #ifdef NDEBUG
-                const bool m_EnableValidationLayers = false;
+                const bool k_enable_validation_layers = false;
             #else
-                const bool m_EnableValidationLayers = true;
+                const bool k_enable_validation_layers = true;
             #endif
 
     };

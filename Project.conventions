@@ -1,0 +1,10 @@
+
+Public Static Functions: snake_case
+Private Static Members: s_snake_case
+Namespace scope Functions: CamelCase
+Namespaces: CamelCase
+Class/Struct names: CamelCase
+Class/Struct Function names: snake_case
+Data Memeber: snake_case
+Local members: snake_case
+Constant Member: k_snake_case

@@ -1,15 +1,14 @@
 #pragma once
 #include "Core.h"
 
-#include "../Renderer/Renderer.h"
-
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+//#define GLFW_INCLUDE_VULKAN
+//#include <GLFW/glfw3.h>
 
 namespace Paopu {
 
     // Forward Declarations
     class Renderer;
+    class PaopuWindow;
 
     class PAOPU_API Application {
 
@@ -20,30 +19,22 @@ namespace Paopu {
             void run();
 
         private:
-            /// Handles the initializing of the window
-            ///
-            ///
-            void initWindow();
-            
             /// The main application loop
             ///
             ///
-            void mainLoop();
+            void main_loop();
 
-            /// 
+            /// Call to clean up before being destroyed
             ///
             ///
-            void cleanup();
+            void free();
 
 
         private:
-            const uint32_t WINDOW_WIDTH = 1280;
-            const uint32_t WINDOW_HEIGHT = 720;
-
-            GLFWwindow* m_Window;
-            Renderer* m_Renderer;
+            Renderer* renderer;
+            PaopuWindow* window;
     };
 
     // Defined by the client
-    Application* CreateApplication();
+    Application* create_application();
 }

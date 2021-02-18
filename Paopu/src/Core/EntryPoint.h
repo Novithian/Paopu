@@ -7,7 +7,7 @@
 
 #ifdef PAO_PLATFORM_WINDOWS
 
-    extern Paopu::Application* Paopu::CreateApplication();
+    extern Paopu::Application* Paopu::create_application();
 
     int main(int argc, char** argv){
         
@@ -18,7 +18,7 @@
         /// <summary>
         
         PAO_CORE_INFO("Paopu Framework Initializing...");
-        auto app = Paopu::CreateApplication();
+        auto app = Paopu::create_application();
 
         try {
             app->run();

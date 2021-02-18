@@ -1,42 +1,44 @@
 #include "Application.h"
 
-#include <stdexcept>
+#include "Window.h"
+#include "../Renderer/Renderer.h"
 
 namespace Paopu {
     
     Application::Application() {
-        m_Renderer = new Renderer();
+        renderer = new Renderer();
+        
     }
     
 
-    void Application::initWindow() {
-        glfwInit();
-
-        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-        m_Window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Paopu Application", nullptr, nullptr);
-
-    }
-
     void Application::run() {
-         initWindow();
-         m_Renderer->initBackend();
-         mainLoop();
-         cleanup();     
+
+        // Create our window
+        window = new PaopuWindow("Sandbox");
+        
+        // See Window.h
+        build_window(window);
+
+        renderer->init_backend(window);
+
+        main_loop();
+
+        free();     
     }
 
-    void Application::cleanup() {
-        m_Renderer->cleanup();
+    void Application::free() {
+        renderer->free_renderer();
+        
+        // See Window.h
+        free_window(window);
 
-        glfwDestroyWindow(m_Window);
-        glfwTerminate();
+        delete window;
+        delete renderer;
 
-        delete m_Renderer;
     }
 
-    void Application::mainLoop() {
-        while(!glfwWindowShouldClose(m_Window)) {
+    void Application::main_loop() {
+        while(!glfwWindowShouldClose(window->glfw_window)) {
             glfwPollEvents();
         }
 

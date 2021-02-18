@@ -13,7 +13,7 @@ class SandboxApp : public Paopu::Application {
 
 };
 
-Paopu::Application* Paopu::CreateApplication(){
+Paopu::Application* Paopu::create_application(){
     return new SandboxApp();
 }
 
