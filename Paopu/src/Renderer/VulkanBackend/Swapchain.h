@@ -21,12 +21,16 @@ namespace Paopu {
         std::vector<VkImage> images;
         VkFormat image_format;
         VkExtent2D extent;
+        std::vector<VkImageView> image_views;
     };
 
     ///
     ///
     ///
     inline PAOPU_API void free_swapchain(VkDevice logical_device, PaopuSwapchain* swapchain) {
+        for(auto image_view : swapchain->image_views) {
+            vkDestroyImageView(logical_device, image_view, nullptr);
+        }
         vkDestroySwapchainKHR(logical_device, swapchain->swapchain, nullptr);
     }
 

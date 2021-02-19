@@ -1,0 +1,11 @@
+// -----------------------------------------
+//         - Ideas for the future -
+// -----------------------------------------
+- RIVE runtime integrations for 2D animations using vector art
+      
+        [02-18-21]
+--------------------------------------------
+[ ] - Render Passes
+[ ] - Framebuffers
+[ ] - Command Buffers
+[ ] - Render that fucking triangle

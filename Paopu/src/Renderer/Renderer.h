@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 namespace Paopu {
 
@@ -29,6 +30,13 @@ namespace Paopu {
             void init_backend(PaopuWindow* window);
 
             void free_renderer();
+        private:
+            ///
+            ///
+            ///
+            std::vector<char> read_shader(const std::string& file_name);
+
+            
  
     // --------------------------------------------------------------------
     //                            - Vulkan -
@@ -67,7 +75,7 @@ namespace Paopu {
                 VkDebugUtilsMessageTypeFlagsEXT message_type,
                 const VkDebugUtilsMessengerCallbackDataEXT* callback_data,
                 void* user_data ){
-                std::cerr << "[Renderer][Validation Layer]: " << callback_data->pMessage << 'n';
+                //std::cerr << "[Renderer][Validation Layer]: " << callback_data->pMessage << 'n';
                 return VK_FALSE;
             }
 
@@ -117,6 +125,21 @@ namespace Paopu {
             ///
             ///
             void create_swapchain(PaopuWindow* window);
+
+            /// Create the swapchain's Image Views
+            ///
+            ///
+            void create_image_views();
+
+            ///
+            ///
+            ///
+            void create_pipeline();
+
+            ///
+            ///
+            ///
+            VkShaderModule create_shader_module(const std::vector<char>& shader_code);
             
 
         private:
@@ -125,6 +148,7 @@ namespace Paopu {
             VkDebugUtilsMessengerEXT debug_messenger;
             PaopuDevice* device;
             PaopuSwapchain* swapchain;
+            VkPipelineLayout pipeline_layout;
 
             const std::vector<const char*> validation_layers = {
                 "VK_LAYER_KHRONOS_validation"
